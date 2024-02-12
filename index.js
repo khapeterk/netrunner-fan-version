@@ -9,12 +9,22 @@ function drawBackground() {
     context.fillRect(0, 0, canvas.width, canvas.height)
 }
 
+function drawRoundedRectangle({x,y,w,h,radius}) {
+    context.strokeStyle = "gray"
+    context.beginPath()
+    context.roundRect(x, y, w, h, [radius])
+    context.stroke()
+    context.fillStyle = "gray"
+    context.fill()
+}
+
 let count = 0;
 
 function animate() {
     window.requestAnimationFrame(animate)
 
     drawBackground()
+    drawRoundedRectangle({x:10,y:10,w:250,h:350,radius:20})
 
     console.log(count)
     count++
