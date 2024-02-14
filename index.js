@@ -1,10 +1,12 @@
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
+const fullWindow = window
 
 let mousePosition
-
-canvas.width = 1280
-canvas.height = 720
+function resizeCanvas() {
+    canvas.width = fullWindow.innerWidth
+    canvas.height = fullWindow.innerHeight
+}
 
 function drawBackground() {
     context.fillStyle = "black"
@@ -33,8 +35,11 @@ function animate() {
 
     drawBackground()
     card.draw()
-    write(mousePosition.toString, canvas.width/2, canvas.height/2)
+    if (mousePosition) write(mousePosition.toString, canvas.width / 2, canvas.height / 2)
+    write(canvas.width + ", " + canvas.height, canvas.width / 2, canvas.height / 3)
 }
 
 animate()
+resizeCanvas()
 
+window.addEventListener('resize', resizeCanvas);
