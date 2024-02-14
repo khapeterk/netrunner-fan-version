@@ -1,11 +1,15 @@
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
-const fullWindow = window
+const cardDimensionsRef = {
+    w: 250,
+    h: 350,
+    radius: 20,
+}
 
 let mousePosition
 function resizeCanvas() {
-    canvas.width = fullWindow.innerWidth
-    canvas.height = fullWindow.innerHeight
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
 }
 
 function drawBackground() {
@@ -23,23 +27,33 @@ function onCanvasMouseMove(event) {
 }
 
 function write(text, x, y) {
-    context.font = "48px serif";
+    context.font = "20px serif";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
     context.fillText(text, x, y);
 }
 
-const card = new Card()
-card.changePostion({ x: 50, y: 100 })
+resizeCanvas()
+
+const cards = []
+const maxCards = Math.floor(canvas.width / 300)
+for (let cardCount = 0; cardCount < maxCards; cardCount++) {
+    const left = (canvas.width - (300 * maxCards - 50)) / 2
+    cards.push(new Card(left + cardCount * 300, canvas.height / 3 * 2))
+}
 
 function animate() {
     window.requestAnimationFrame(animate)
 
     drawBackground()
-    card.draw()
-    if (mousePosition) write(mousePosition.toString, canvas.width / 2, canvas.height / 2)
-    write(canvas.width + ", " + canvas.height, canvas.width / 2, canvas.height / 3)
+    cards.forEach(card => card.draw())
+    cards.forEach(card => drawRoundedRectangle("gray", card.position.x, canvas.height / 3, cardDimensionsRef.w, cardDimensionsRef.h, cardDimensionsRef.radius))
+
+    if (mousePosition) write("mousePosition: " + mousePosition.toString, canvas.width / 2, 10)
+    write("windowWidth: " + canvas.width + ", windowHeight: " + canvas.height, canvas.width / 2, 30)
+    write(maxCards + " cards", canvas.width / 2, 50)
 }
 
 animate()
-resizeCanvas()
 
 window.addEventListener('resize', resizeCanvas);
