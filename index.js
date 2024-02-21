@@ -1,11 +1,3 @@
-let cardsData
-
-fetch('./cards.json')
-    .then((response) => response.json())
-    .then((json) => {
-        cardsData = json.cards
-    })
-
 let libraryY = 0
 let maxLibraryCardsWidth = 0
 let keys = {}
@@ -45,11 +37,11 @@ function write(text, x, y, color, align) {
 resizeCanvas()
 
 let currentLibraryCardPreview, currentDeckCardPreview
-const cards = []
+// const cards = []
 const maxCards = Math.floor(canvas.width / 300)
 for (let cardCount = 0; cardCount < maxCards; cardCount++) {
     const left = (canvas.width - (300 * maxCards - 50)) / 2
-    cards.push(new CardSprite(left + cardCount * 300, canvas.height / 3 * 2, "imgs/v1.0 Limited/CORP/aardvark.jpg"))
+    // cards.push(new CardSprite(left + cardCount * 300, canvas.height / 3 * 2, "imgs/v1.0 Limited/CORP/aardvark.jpg"))
 }
 
 function animate() {
@@ -57,14 +49,14 @@ function animate() {
 
     drawBackground()
 
-    cards.forEach(card => card.draw())
+    // cards.forEach(card => card.draw())
 
-    cards.forEach(card => drawRoundedRectangle("gray", card.position.x, canvas.height / 3, cardDimensionsRef.w, cardDimensionsRef.h, cardDimensionsRef.radius))
+    // cards.forEach(card => drawRoundedRectangle("gray", card.position.x, canvas.height / 3, cardDimensionsRef.w, cardDimensionsRef.h, cardDimensionsRef.radius))
 
 
-    if (cardsData) {
+    if (cards) {
         let row = 0
-        cardsData.forEach(card => {
+        cards.forEach(card => {
             const cardNameWidth = write(card.Name, 20, 20 + row * 20 + libraryY, "gray", "left").width
             if (maxLibraryCardsWidth < cardNameWidth ) maxLibraryCardsWidth = cardNameWidth
             row++
@@ -110,7 +102,7 @@ canvas.addEventListener('mousemove', (event) => {
 })
 
 function keepLibraryInBounds() {
-    const minLibraryY = -cardsData.length * 20 + canvas.height - 20
+    const minLibraryY = -cards.length * 20 + canvas.height - 20
     const maxLibraryY = 0
     if (libraryY > maxLibraryY) libraryY = maxLibraryY
     if (libraryY < minLibraryY) libraryY = minLibraryY
