@@ -1,6 +1,7 @@
-let libraryY = 0
 let maxLibraryCardsWidth = 0
-let keys = {}
+const keys = {}
+const textSize = 20
+let cardListIndex = 0
 
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
@@ -15,8 +16,8 @@ let midpointWidth, midpointHeight
 function resizeCanvas() {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
-    midpointWidth = canvas.width/2
-    midpointHeight = canvas.height/2
+    midpointWidth = canvas.width / 2
+    midpointHeight = canvas.height / 2
 }
 
 function drawBackground() {
@@ -25,7 +26,7 @@ function drawBackground() {
 }
 
 function write(text, x, y, color, align) {
-    context.font = "20px serif"
+    context.font = textSize + "px serif"
     context.textAlign = align ? align : "center"
     context.textBaseline = "middle"
     context.fillStyle = color
@@ -55,19 +56,18 @@ function animate() {
 
 
     if (cards) {
-        let row = 0
-        cards.forEach(card => {
-            const cardNameWidth = write(card.Name, 20, 20 + row * 20 + libraryY, "gray", "left").width
-            if (maxLibraryCardsWidth < cardNameWidth ) maxLibraryCardsWidth = cardNameWidth
-            row++
-        })
+        const heightInCardNames = Math.floor(canvas.height / textSize)
+        for (let index = 0; index < heightInCardNames; index++) {
+            const cardNameWidth = write(cardListIndex + index + " " + cards[cardListIndex + index].Name, textSize, textSize + index * textSize, "gray", "left").width
+            if (maxLibraryCardsWidth < cardNameWidth) maxLibraryCardsWidth = cardNameWidth
+        }
     }
 
     if (mousePosition) write("mousePosition: " + mousePosition.toString, canvas.width / 2, 10, "gray")
     write("windowWidth: " + canvas.width + ", windowHeight: " + canvas.height, canvas.width / 2, 30, "gray")
     write(maxCards + " cards", canvas.width / 2, 50, "gray")
 
-    
+
 }
 
 animate()
@@ -83,14 +83,12 @@ canvas.addEventListener('mouseout', (event) => {
     keys.leftClick = false
 })
 canvas.addEventListener('wheel', event => {
-    libraryY += (event.deltaY > 0 ? -1 : 1) * 100
-    // event.deltaY < 0 is a scroll up
-    // event.deltaY > 0 is a scroll down
+    cardListIndex += (event.deltaY < 0 ? -3 : 3)
     keepLibraryInBounds()
 })
 canvas.addEventListener('mousemove', (event) => {
     if (keys.leftClick) {
-        libraryY += event.movementY
+        cardListIndex += (event.movementY > 0 ? -1 : 1)
         keepLibraryInBounds()
     }
     var rect = canvas?.getBoundingClientRect()
@@ -102,8 +100,10 @@ canvas.addEventListener('mousemove', (event) => {
 })
 
 function keepLibraryInBounds() {
-    const minLibraryY = -cards.length * 20 + canvas.height - 20
-    const maxLibraryY = 0
-    if (libraryY > maxLibraryY) libraryY = maxLibraryY
-    if (libraryY < minLibraryY) libraryY = minLibraryY
+    const heightInCardNames = Math.floor(canvas.height / textSize)
+    const minLibraryY = 0
+    const maxLibraryY = cards.length - heightInCardNames
+
+    if (cardListIndex > maxLibraryY) cardListIndex = maxLibraryY
+    if (cardListIndex < minLibraryY) cardListIndex = minLibraryY
 }
